@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+	<!-- 控制台输出 -->
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoding>UTF-8</encoding>
+		<encoder>
+			<!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>DEBUG</level>
+		</filter>
+	</appender>
+	<!-- 按照每天生成日志文件 -->
+	<appender name="mmall" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>E:/apache-tomcat-7.0.85/logs/mmall/mmall.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+              <fileNamePattern>E:/apache-tomcat-7.0.85/logs/mmall/mmall.log.%d{yyyy-MM-dd}.gz</fileNamePattern>
+              <append>true</append>
+              <!-- 限制文件最大保存时间为15天; 15*24=360 -->
+              <maxHistory>360</maxHistory>
+              <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                 <!-- 当文件大小超过60M时触发滚动,这里设置60M -->
+                 <maxFileSize>60MB</maxFileSize>
+              </timeBasedFileNamingAndTriggeringPolicy>
+          </rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+		<!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+		<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+		</encoder>
+	</appender>
+	
+	<appender name="error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>E:/apache-tomcat-7.0.85/logs/mmall/error.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+              <fileNamePattern>E:/apache-tomcat-7.0.85/logs/mmall/error.log.%d{yyyy-MM-dd}.gz</fileNamePattern>
+              <append>true</append>
+              <maxHistory>360</maxHistory>
+              <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                 <maxFileSize>60MB</maxFileSize>
+              </timeBasedFileNamingAndTriggeringPolicy>
+          </rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+		<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+	
+	<!-- 把info级别的日志打印到这两个文件下 -->
+	<logger name="com.mmall" additivity="false" level="INFO">
+		<appender-ref ref="mmall"/>
+		<appender-ref ref="console"/>
+	</logger>
+	<!-- dao下的日志设为debug级别 -->
+	<logger name="com.mmall.dao"  level="DEBUG">
+	</logger>
+	
+	<root level="debug">
+          <appender-ref ref="console" />
+          <appender-ref ref="error" />
+    </root>
+</configuration>
